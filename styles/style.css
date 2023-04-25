@@ -1,0 +1,80 @@
+/*----------------------------*/
+/*------------------------------*/
+@import url("./parameters.css");
+/*-------------------------------*/
+/*--------------------------------*/
+.body {
+  font-family: "Trebuchet MS", "Helvetica", sans-serif;
+}
+.container {
+    margin: 0 auto;
+}
+.keyboard-title {
+    margin: 10px 0;
+    text-align: center;
+    font-size: 30px;
+    color: rgba(101,134,177,0.8);
+    -webkit-text-stroke: 1px rgba(114,177,101,0.8);
+    -webkit-text-fill-color: rgba(101,134,177,0.8);
+}
+.body--textarea {
+    display: block;
+    width: 700px;
+    height: 200px;
+    margin: 10px auto 10px;
+    padding: 10px;
+    font-size: 18px;
+    color: #444444;
+    border: 1px solid grey;
+}
+.keyboard {
+    background: #888888;
+    width: 704px;
+    margin: 0 auto;
+    padding: 5px;
+    border: 3px solid #222222;
+    border-radius: 5px;
+}
+.keyboard__keys {
+    text-align: center;
+}
+.keyboard__key {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    margin: 3px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 40px;
+    text-align: center;
+    color: #ffffff;
+    background: #444444;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    user-select: none;
+    transition: border-radius 0.2s, background-color 0.3s; 
+}
+.keyboard__key:hover {
+    background-color: rgb(118, 151, 118);
+   
+}
+.keyboard__key:active {
+    background-color: rgb(41, 236, 41);
+    border-radius: 50%;
+}
+.specific-color {
+    background-color: #222222;
+}
+.key--max-wide {
+    width: 100px;
+}
+.key--wide {
+    width: 86px;
+}
+.key--min-wide {
+    width: 50px;
+}
+.key--wideble {
+    width: 44px;
+}
