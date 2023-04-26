@@ -4,5 +4,15 @@
         "es6": true,
         "node": true
     },
-    "extends": ["airbnb/base"]
+    "extends": ["airbnb/base"],
+    "rules": {
+        "prefer-destructuring": "off",
+        "no-underscore-dangle": "off",
+        "no-param-reassign": "off",
+        "linebreak-style": "off",
+        "import/extensions": {
+            "js": "always"
+        }
+       
+    }
 }

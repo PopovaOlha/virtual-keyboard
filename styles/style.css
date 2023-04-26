@@ -35,14 +35,15 @@
     border: 3px solid #222222;
     border-radius: 5px;
 }
-.keyboard__keys {
+.keyboard__keys { 
+    margin: auto;
     text-align: center;
 }
 .keyboard__key {
     width: 40px;
     height: 40px;
     position: relative;
-    margin: 3px;
+    margin:2px;
     font-weight: 600;
     font-size: 16px;
     line-height: 40px;
@@ -77,4 +78,7 @@
 }
 .key--wideble {
     width: 44px;
+}
+.key--extra-wide {
+    width: 330px;
 }
