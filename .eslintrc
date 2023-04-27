@@ -9,10 +9,6 @@
         "prefer-destructuring": "off",
         "no-underscore-dangle": "off",
         "no-param-reassign": "off",
-        "linebreak-style": "off",
-        "import/extensions": {
-            "js": "always"
-        }
-       
+        "linebreak-style": "off"  
     }
 }

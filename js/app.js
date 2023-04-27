@@ -3,6 +3,7 @@ import keyLayout from './keys.js';
 const Keyboard = {
   elements: {
     container: null,
+    title: null,
     textArea: null,
     main: null,
     keysContainer: null,
@@ -21,116 +22,158 @@ const Keyboard = {
 
   init({ elements } = this) {
     let {
-      container, textArea, main, keysContainer,
+      container, title, textArea, main, keysContainer,
     } = elements;
 
     // create elements
     container = document.createElement('div');
+    title = document.createElement('h1');
     textArea = document.createElement('textarea');
     main = document.createElement('div');
     keysContainer = document.createElement('div');
 
     // setup elements
     container.classList.add('container');
+    title.classList.add('keyboard-title');
+    title.innerHTML = 'RSS Виртуальная клавиатура';
     textArea.classList.add('body--textarea');
     main.classList.add('keyboard');
     keysContainer.classList.add('keyboard__keys');
     keysContainer.appendChild(this._createKeys());
 
     // add to DOM
-    container.append(textArea);
+    container.append(title, textArea);
     main.append(keysContainer);
     document.body.append(container, main);
   },
 
-  _createKeys({properties} = this) {
+  _createKeys({ properties } = this) {
     const fragment = document.createDocumentFragment();
-    const keyLayout = ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
-    'Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\'', 'Del',
-    'CapsLock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter',
-    'ShiftL', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '▲', 'ShiftR',
-    'CtrlL', 'Win', 'Alt', 'Space', 'Alt', '◄', '▼', '►', 'CtrlR']; 
 
-    keyLayout.forEach(key => {
-    const keyElement = document.createElement('button');
-    const insertLineBreak = ['Backspace', 'Del', 'Enter', 'ShiftR', 'CtrlR' ].indexOf(key) !== -1;
-    
-    //add attributes of a key
-    keyElement.setAttribute('type', 'button');
-    keyElement.classList.add('keyboard__key');
+    keyLayout.forEach((key) => {
+      const keyElement = document.createElement('button');
+      const insertLineBreak = ['Backspace', 'Del', 'Enter', 'ShiftR', 'CtrlR'].indexOf(key) !== -1;
+      const addClass = ['Del', 'Win', 'Alt', '◄', '▼', '►'].indexOf(key) !== -1;
 
-    switch (key) {
+      // add attributes of a key
+      keyElement.setAttribute('type', 'button');
+      keyElement.classList.add('keyboard__key');
+
+      if (addClass) {
+        keyElement.classList.add('specific-color');
+      }
+
+      switch (key) {
         case 'Backspace':
-            keyElement.classList.add('specific-color', 'key--max-wide');
-            keyElement.innerHTML = 'Backspace';
+          keyElement.classList.add('specific-color', 'key--max-wide');
+          keyElement.innerHTML = 'Backspace';
 
-            keyElement.addEventListener('click', () => {
-                properties.value = properties.value.substring(0, properties.value.length -1);
-                this._triggerEvent('oninput');
-            })
+          keyElement.addEventListener('click', () => {
+            properties.value = properties.value.substring(0, properties.value.length - 1);
+            this._triggerEvent('oninput');
+          });
 
-            break;
+          break;
 
         case 'CapsLock':
-            keyElement.classList.add('specific-color', 'key--max-wide'); 
-            keyElement.innerHTML = 'CapsLock';
+          keyElement.classList.add('specific-color', 'key--max-wide');
+          keyElement.innerHTML = 'CapsLock';
 
-            keyElement.addEventListener('click', () => {
-                this._toggleCapsLock();
-            })
+          keyElement.addEventListener('click', () => {
+            this._toggleCapsLock();
+          });
 
-            break;
+          break;
 
         case 'Enter':
-            keyElement.classList.add('specific-color', 'key--wide');
-            keyElement.innerHTML = 'Enter';  
-            
-            keyElement.addEventListener('click', () => {
-                properties.value += '\n';
-                this._triggerEvent('oninput');
-            })
+          keyElement.classList.add('specific-color', 'key--wide');
+          keyElement.innerHTML = 'Enter';
 
-            break;
+          keyElement.addEventListener('click', () => {
+            properties.value += '\n';
+            this._triggerEvent('oninput');
+          });
+
+          break;
 
         case 'Space':
-            keyElement.classList.add('specific-color', 'key--extra-wide');
-            keyElement.innerHtml = " ";  
+          keyElement.classList.add('key--extra-wide');
+          keyElement.innerHtml = ' ';
 
-            keyElement.addEventListener('click', () => {
-                properties.value += " ";
-                this._triggerEvent('oninput');
-            })
+          keyElement.addEventListener('click', () => {
+            properties.value += ' ';
+            this._triggerEvent('oninput');
+          });
 
-            break;
+          break;
 
         case 'ShiftL':
-            keyElement.classList.add('specific-color', 'key--max-wide');
-            keyElement.innerHTML = 'Shift';
-            
-            keyElement.addEventListener('click', () => {
-                alert('поменять символы');
-            })
+          keyElement.classList.add('specific-color', 'key--max-wide');
+          keyElement.innerHTML = 'Shift';
 
-            break;
+          keyElement.addEventListener('click', () => {
+            alert('поменять символы');
+          });
+
+          break;
+
+        case 'Tab':
+          keyElement.classList.add('specific-color', 'key--min-wide');
+          keyElement.innerHTML = 'Tab';
+
+          keyElement.addEventListener('click', () => {
+            alert('поменять символы');
+          });
+
+          break;
+
+        case 'ShiftR':
+          keyElement.classList.add('specific-color', 'key--wide');
+          keyElement.innerHTML = 'Shift';
+
+          keyElement.addEventListener('click', () => {
+            alert('поменять символы');
+          });
+
+          break;
+
+        case 'CtrlL':
+          keyElement.classList.add('specific-color');
+          keyElement.innerHTML = 'Ctrl';
+
+          keyElement.addEventListener('click', () => {
+            alert('поменять символы');
+          });
+
+          break;
+
+        case 'CtrlR':
+          keyElement.classList.add('specific-color');
+          keyElement.innerHTML = 'Ctrl';
+
+          keyElement.addEventListener('click', () => {
+            alert('поменять символы');
+          });
+
+          break;
 
         default:
-            keyElement.textContent = key.toLowerCase(); 
-            
-            keyElement.addEventListener('click', () => {
-                properties.value = properties.capsLock ? key.toUpperCase() : key.toLowerCase();
-                this._triggerEvent('oninput');
-            })
+          keyElement.textContent = key.toLowerCase();
 
-            break;
-    }
+          keyElement.addEventListener('click', () => {
+            properties.value = properties.capsLock ? key.toUpperCase() : key.toLowerCase();
+            this._triggerEvent('oninput');
+          });
 
-    fragment.appendChild(keyElement);
+          break;
+      }
 
-    if (insertLineBreak) {
+      fragment.appendChild(keyElement);
+
+      if (insertLineBreak) {
         fragment.appendChild(document.createElement('br'));
-    }
-    
-   })
+      }
+    });
     return fragment;
   },
 
@@ -145,19 +188,19 @@ const Keyboard = {
   changeLanguage() {},
 
   keyboardSynchronization() {
-   
+
   },
 };
 
-document.addEventListener('keydown', (event) => {
-    if (event.key) {
-      console.log(event.key)
+function keyboardKey(event) {
+  event.preventDefault();
+  const getKey = keyLayout.map((key) => {
+    if (event.key === key) {
+      console.log(event.target);
     }
-  })
-
-
- 
-
+  });
+}
+window.addEventListener('keydown', keyboardKey);
 function startInit() {
   Keyboard.init();
 }
