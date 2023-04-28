@@ -40,11 +40,21 @@ const Keyboard = {
     main.classList.add('keyboard');
     keysContainer.classList.add('keyboard__keys');
     keysContainer.appendChild(this._createKeys());
+    this.elements.keys = keysContainer.childNodes;
 
     // add to DOM
     container.append(title, textArea);
     main.append(keysContainer);
     document.body.append(container, main);
+
+    // automatically use keyboard for elements with .body--textarea
+    document.querySelectorAll('.body--textarea').forEach((element) => {
+      element.addEventListener('focus', () => {
+        this.open(element.value, (currentValue) => {
+          element.value = currentValue;
+        });
+      });
+    });
   },
 
   _createKeys({ properties } = this) {
@@ -122,7 +132,8 @@ const Keyboard = {
           keyElement.innerHTML = 'Tab';
 
           keyElement.addEventListener('click', () => {
-            alert('поменять символы');
+            properties.value += ' ';
+            this._triggerEvent('oninput');
           });
 
           break;
@@ -132,27 +143,27 @@ const Keyboard = {
           keyElement.innerHTML = 'Shift';
 
           keyElement.addEventListener('click', () => {
-            alert('поменять символы');
+            properties.value += '';
           });
 
           break;
 
-        case 'CtrlL':
+        case 'ControlL':
           keyElement.classList.add('specific-color');
           keyElement.innerHTML = 'Ctrl';
 
           keyElement.addEventListener('click', () => {
-            alert('поменять символы');
+            properties.value += '';
           });
 
           break;
 
-        case 'CtrlR':
+        case 'ControlR':
           keyElement.classList.add('specific-color');
           keyElement.innerHTML = 'Ctrl';
 
           keyElement.addEventListener('click', () => {
-            alert('поменять символы');
+            properties.value += '';
           });
 
           break;
@@ -161,7 +172,7 @@ const Keyboard = {
           keyElement.textContent = key.toLowerCase();
 
           keyElement.addEventListener('click', () => {
-            properties.value = properties.capsLock ? key.toUpperCase() : key.toLowerCase();
+            properties.value += properties.capsLock ? key.toUpperCase() : key.toLowerCase();
             this._triggerEvent('oninput');
           });
 
@@ -178,31 +189,51 @@ const Keyboard = {
   },
 
   _triggerEvent(handlerName) {
-    console.log(`Event Triggered! Event name${handlerName}`);
+    if (typeof this.eventsHandlers[handlerName] === 'function') {
+      this.eventsHandlers[handlerName](this.properties.value);
+    }
   },
 
-  _toggleCapsLock() {
-    console.log('capslock Toggled!');
+  _toggleCapsLock({ properties } = this) {
+    properties.capsLock = !properties.capsLock;
+    const currentKey = [...this.elements.keys];
+    currentKey.map(key => {
+      if (key.classList[1] !== 'specific-color') {
+        key.textContent = properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
+      }
+    });
   },
 
+  open(initialValue, oninput, onclose) {
+    this.properties.value = initialValue || '';
+    this.eventsHandlers.oninput = oninput;
+    this.eventsHandlers.onclose = onclose;
+  },
+  close() {
+    this.properties.value = '';
+    this.eventsHandlers.oninput = oninput;
+    this.eventsHandlers.onclose = onclose;
+  },
   changeLanguage() {},
 
-  keyboardSynchronization() {
+  keyboardSynchronization() {},
 
-  },
 };
 
-function keyboardKey(event) {
-  event.preventDefault();
-  const getKey = keyLayout.map((key) => {
-    if (event.key === key) {
-      console.log(event.target);
+window.addEventListener('DOMContentLoaded', () => {
+  Keyboard.init();
+});
+window.addEventListener('keydown', (e) => {
+  const currentKey = [...Keyboard.elements.keys];
+  currentKey.forEach((key) => {
+    if (e.key === 'CapsLock' && key.textContent === 'CapsLock') {
+      Keyboard._toggleCapsLock();
+    }
+
+    if (key.textContent.toUpperCase() === e.key.toUpperCase() || key.textContent.toLowerCase() === e.key.toLowerCase()) {
+      key.classList.add('active');
+    } else {
+      key.classList.remove('active');
     }
   });
-}
-window.addEventListener('keydown', keyboardKey);
-function startInit() {
-  Keyboard.init();
-}
-
-window.addEventListener('DOMContentLoaded', startInit);
+});

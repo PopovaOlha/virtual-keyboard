@@ -9,6 +9,7 @@
         "prefer-destructuring": "off",
         "no-underscore-dangle": "off",
         "no-param-reassign": "off",
-        "linebreak-style": "off"  
+        "linebreak-style": "off",
+        "max-len": "off"  
     }
 }
