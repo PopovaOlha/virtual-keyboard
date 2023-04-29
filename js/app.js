@@ -1,4 +1,5 @@
 import keyLayout from './keys.js';
+import langKeys from './ru-keys.js';
 
 const Keyboard = {
   elements: {
@@ -39,7 +40,7 @@ const Keyboard = {
     textArea.classList.add('body--textarea');
     main.classList.add('keyboard');
     keysContainer.classList.add('keyboard__keys');
-    keysContainer.appendChild(this._createKeys());
+    keysContainer.append(this._createKeys(), this.changeLanguage());
     this.elements.keys = keysContainer.childNodes;
 
     // add to DOM
@@ -197,7 +198,7 @@ const Keyboard = {
   _toggleCapsLock({ properties } = this) {
     properties.capsLock = !properties.capsLock;
     const currentKey = [...this.elements.keys];
-    currentKey.map(key => {
+    currentKey.map((key) => {
       if (key.classList[1] !== 'specific-color') {
         key.textContent = properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
       }
@@ -214,7 +215,17 @@ const Keyboard = {
     this.eventsHandlers.oninput = oninput;
     this.eventsHandlers.onclose = onclose;
   },
-  changeLanguage() {},
+  changeLanguage() {
+    const fragment = document.createDocumentFragment();
+    langKeys.forEach((key) => {
+      const changeKey = document.createElement('button');
+      changeKey.setAttribute('type', 'button');
+      changeKey.classList.add('change__key', 'hidden');
+      changeKey.textContent = key.toLowerCase();
+      fragment.appendChild(changeKey);
+    });
+    return fragment;
+  },
 
   keyboardSynchronization() {},
 
@@ -223,15 +234,23 @@ const Keyboard = {
 window.addEventListener('DOMContentLoaded', () => {
   Keyboard.init();
 });
+
 window.addEventListener('keydown', (e) => {
   const currentKey = [...Keyboard.elements.keys];
   currentKey.forEach((key) => {
+    if (e.shiftKey && e.altKey) {
+      key.classList.remove('hidden');
+    }
+
     if (e.key === 'CapsLock' && key.textContent === 'CapsLock') {
       Keyboard._toggleCapsLock();
     }
 
     if (key.textContent.toUpperCase() === e.key.toUpperCase() || key.textContent.toLowerCase() === e.key.toLowerCase()) {
       key.classList.add('active');
+      Keyboard.open(key.value, (currentValue) => {
+        key.value = currentValue;
+      });
     } else {
       key.classList.remove('active');
     }

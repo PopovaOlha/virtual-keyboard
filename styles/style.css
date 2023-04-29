@@ -39,6 +39,7 @@
     margin: auto;
     text-align: center;
 }
+
 .keyboard__key {
     width: 40px;
     height: 40px;
@@ -56,6 +57,25 @@
     user-select: none;
     transition: border-radius 0.2s, background-color 0.3s; 
 }
+
+.change__key {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    margin: 3px 2.6px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 40px;
+    text-align: center;
+    color: #ffffff;
+    background: #444444;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    user-select: none;
+    transition: border-radius 0.2s, background-color 0.3s; 
+}
+
 .keyboard__key:hover {
     background-color: rgb(118, 151, 118);
    
@@ -86,4 +106,7 @@
 }
 .active {
     background-color: green;
+}
+.hidden{
+    display:none;
 }
