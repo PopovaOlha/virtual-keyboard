@@ -1,4 +1,5 @@
 import keyLayout from './keys.js';
+import langKeys from './ru-keys.js';
 
 const Keyboard = {
   elements: {
@@ -7,7 +8,9 @@ const Keyboard = {
     textArea: null,
     main: null,
     keysContainer: null,
+    engContainer: null,
     keys: [],
+    changeKeys: [],
   },
 
   eventsHandlers: {
@@ -22,7 +25,7 @@ const Keyboard = {
 
   init({ elements } = this) {
     let {
-      container, title, textArea, main, keysContainer,
+      container, title, textArea, main, keysContainer, engContainer,
     } = elements;
 
     // create elements
@@ -31,6 +34,7 @@ const Keyboard = {
     textArea = document.createElement('textarea');
     main = document.createElement('div');
     keysContainer = document.createElement('div');
+    engContainer = document.createElement('div');
 
     // setup elements
     container.classList.add('container');
@@ -39,12 +43,22 @@ const Keyboard = {
     textArea.classList.add('body--textarea');
     main.classList.add('keyboard');
     keysContainer.classList.add('keyboard__keys');
-    keysContainer.appendChild(this._createKeys());
+    engContainer.classList.add('change__keys', 'hidden');
+    keysContainer.appendChild(this._createKeys(keyLayout));
+    engContainer.appendChild(this._createKeys(langKeys));
     this.elements.keys = keysContainer.childNodes;
+    this.elements.changeKeys = engContainer.childNodes;
+
+    window.addEventListener('keydown', (e) => {
+      if (e.shiftKey && e.altKey) {
+        engContainer.classList.toggle('hidden');
+        keysContainer.classList.toggle('hidden');
+      }
+    });
 
     // add to DOM
     container.append(title, textArea);
-    main.append(keysContainer);
+    main.append(keysContainer, engContainer);
     document.body.append(container, main);
 
     // automatically use keyboard for elements with .body--textarea
@@ -57,14 +71,13 @@ const Keyboard = {
     });
   },
 
-  _createKeys({ properties } = this) {
+  _createKeys(currentArray) {
     const fragment = document.createDocumentFragment();
 
-    keyLayout.forEach((key) => {
+    currentArray.forEach((key) => {
       const keyElement = document.createElement('button');
       const insertLineBreak = ['Backspace', 'Del', 'Enter', 'ShiftR', 'CtrlR'].indexOf(key) !== -1;
       const addClass = ['Del', 'Win', 'Alt', '◄', '▼', '►'].indexOf(key) !== -1;
-
       // add attributes of a key
       keyElement.setAttribute('type', 'button');
       keyElement.classList.add('keyboard__key');
@@ -79,7 +92,7 @@ const Keyboard = {
           keyElement.innerHTML = 'Backspace';
 
           keyElement.addEventListener('click', () => {
-            properties.value = properties.value.substring(0, properties.value.length - 1);
+            this.properties.value = this.properties.value.substring(0, this.properties.value.length - 1);
             this._triggerEvent('oninput');
           });
 
@@ -100,7 +113,7 @@ const Keyboard = {
           keyElement.innerHTML = 'Enter';
 
           keyElement.addEventListener('click', () => {
-            properties.value += '\n';
+            this.properties.value += '\n';
             this._triggerEvent('oninput');
           });
 
@@ -111,7 +124,7 @@ const Keyboard = {
           keyElement.innerHtml = ' ';
 
           keyElement.addEventListener('click', () => {
-            properties.value += ' ';
+            this.properties.value += ' ';
             this._triggerEvent('oninput');
           });
 
@@ -122,18 +135,6 @@ const Keyboard = {
           keyElement.innerHTML = 'Shift';
 
           keyElement.addEventListener('click', () => {
-            alert('поменять символы');
-          });
-
-          break;
-
-        case 'Tab':
-          keyElement.classList.add('specific-color', 'key--min-wide');
-          keyElement.innerHTML = 'Tab';
-
-          keyElement.addEventListener('click', () => {
-            properties.value += ' ';
-            this._triggerEvent('oninput');
           });
 
           break;
@@ -142,8 +143,15 @@ const Keyboard = {
           keyElement.classList.add('specific-color', 'key--wide');
           keyElement.innerHTML = 'Shift';
 
+          break;
+
+        case 'Tab':
+          keyElement.classList.add('specific-color', 'key--min-wide');
+          keyElement.innerHTML = 'Tab';
+
           keyElement.addEventListener('click', () => {
-            properties.value += '';
+            this.properties.value += ' ';
+            this._triggerEvent('oninput');
           });
 
           break;
@@ -153,7 +161,7 @@ const Keyboard = {
           keyElement.innerHTML = 'Ctrl';
 
           keyElement.addEventListener('click', () => {
-            properties.value += '';
+            this.properties.value += '';
           });
 
           break;
@@ -163,7 +171,7 @@ const Keyboard = {
           keyElement.innerHTML = 'Ctrl';
 
           keyElement.addEventListener('click', () => {
-            properties.value += '';
+            this.properties.value += '';
           });
 
           break;
@@ -172,7 +180,7 @@ const Keyboard = {
           keyElement.textContent = key.toLowerCase();
 
           keyElement.addEventListener('click', () => {
-            properties.value += properties.capsLock ? key.toUpperCase() : key.toLowerCase();
+            this.properties.value += this.properties.capsLock ? key.toUpperCase() : key.toLowerCase();
             this._triggerEvent('oninput');
           });
 
@@ -197,7 +205,7 @@ const Keyboard = {
   _toggleCapsLock({ properties } = this) {
     properties.capsLock = !properties.capsLock;
     const currentKey = [...this.elements.keys];
-    currentKey.map(key => {
+    currentKey.map((key) => {
       if (key.classList[1] !== 'specific-color') {
         key.textContent = properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
       }
@@ -214,15 +222,12 @@ const Keyboard = {
     this.eventsHandlers.oninput = oninput;
     this.eventsHandlers.onclose = onclose;
   },
-  changeLanguage() {},
-
-  keyboardSynchronization() {},
-
 };
 
 window.addEventListener('DOMContentLoaded', () => {
   Keyboard.init();
 });
+
 window.addEventListener('keydown', (e) => {
   const currentKey = [...Keyboard.elements.keys];
   currentKey.forEach((key) => {
@@ -232,6 +237,9 @@ window.addEventListener('keydown', (e) => {
 
     if (key.textContent.toUpperCase() === e.key.toUpperCase() || key.textContent.toLowerCase() === e.key.toLowerCase()) {
       key.classList.add('active');
+      Keyboard.open(key.value, (currentValue) => {
+        key.value = currentValue;
+      });
     } else {
       key.classList.remove('active');
     }
