@@ -9,6 +9,7 @@ const Keyboard = {
     main: null,
     keysContainer: null,
     engContainer: null,
+    textContent: null,
     keys: [],
     changeKeys: [],
   },
@@ -25,7 +26,7 @@ const Keyboard = {
 
   init({ elements } = this) {
     let {
-      container, title, textArea, main, keysContainer, engContainer,
+      container, title, textArea, main, keysContainer, engContainer, textContent,
     } = elements;
 
     // create elements
@@ -35,15 +36,18 @@ const Keyboard = {
     main = document.createElement('div');
     keysContainer = document.createElement('div');
     engContainer = document.createElement('div');
+    textContent = document.createElement('p');
 
     // setup elements
     container.classList.add('container');
     title.classList.add('keyboard-title');
     title.innerHTML = 'RSS Виртуальная клавиатура';
+    textContent.innerHTML = 'Клавиатура создана в операционной системе Windows. Для переключения языка комбинация: левыe shift + alt';
     textArea.classList.add('body--textarea');
     main.classList.add('keyboard');
     keysContainer.classList.add('keyboard__keys');
     engContainer.classList.add('change__keys', 'hidden');
+    textContent.classList.add('text');
     keysContainer.appendChild(this._createKeys(keyLayout));
     engContainer.appendChild(this._createKeys(langKeys));
     this.elements.keys = keysContainer.childNodes;
@@ -59,7 +63,7 @@ const Keyboard = {
     // add to DOM
     container.append(title, textArea);
     main.append(keysContainer, engContainer);
-    document.body.append(container, main);
+    document.body.append(container, main, textContent);
 
     // automatically use keyboard for elements with .body--textarea
     document.querySelectorAll('.body--textarea').forEach((element) => {
